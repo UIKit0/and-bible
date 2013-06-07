@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true" 
-          android:drawable="@drawable/btn_tiny_normal_on" /> 
-    <item android:state_checked="false"
-          android:drawable="@drawable/btn_tiny_normal_off" /> 
+
+    <item android:drawable="@android:color/darker_gray" android:state_checked="true" android:state_pressed="true"/>
+    <item android:drawable="@android:color/darker_gray" android:state_checked="true" android:state_focused="false"/>
+    <item android:drawable="@drawable/abs__cab_background_bottom_holo_dark" android:state_checked="false" android:state_pressed="true"/>
+    <item android:drawable="@drawable/abs__cab_background_bottom_holo_dark" android:state_checked="false" android:state_focused="false"/>
+
 </selector>

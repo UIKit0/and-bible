@@ -1,5 +1,6 @@
 package net.bible.android.view.util;
 
+import net.bible.android.activity.R.style;
 import net.bible.service.device.ScreenSettings;
 import android.app.Activity;
 
@@ -12,9 +13,9 @@ public class UiUtils {
     public static void applyTheme(Activity activity) {
     	ScreenSettings.updateNightModeValue();
         if (ScreenSettings.isNightMode()) {
-        	activity.setTheme(android.R.style.Theme);
+        	activity.setTheme(style.AndBibleThemeDark);
         } else {
-        	activity.setTheme(android.R.style.Theme_Light);
+        	activity.setTheme(style.AndBibleTheme);
         }
     }
   

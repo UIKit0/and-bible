@@ -56,6 +56,8 @@ public class Speak extends ActivityBase {
         mRepeatCheckBox.setChecked(false);
     
         Log.d(TAG, "Finished displaying Speak view");
+        
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void onRewind(View v) {
@@ -117,5 +119,15 @@ public class Speak extends ActivityBase {
     
     private boolean isRepeat() {
     	return mRepeatCheckBox.isChecked();
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 }

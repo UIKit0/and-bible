@@ -49,6 +49,7 @@ public class SearchResults extends ListActivityBase {
             
             Log.d(TAG, "Finished displaying Search view");
         }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /** do the search query and prepare results in lists ready for display
@@ -117,5 +118,15 @@ public class SearchResults extends ListActivityBase {
     		// this also calls finish() on this Activity.  If a user re-selects from HistoryList then a new Activity is created
     		returnToPreviousScreen();
     	}
+    }
+    
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 }

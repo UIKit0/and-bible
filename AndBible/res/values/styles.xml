@@ -6,18 +6,15 @@
       The copyright to this program is held by it's author.
 -->
 <resources>
-	<style name="AndBibleTheme" parent="@android:style/Theme.Light">
-		<item name="android:windowTitleSize">30dp</item>
-	</style>
+    <style name="AndBibleTheme" parent="@style/Theme.Sherlock.Light.DarkActionBar"></style>
+
+    <style name="AndBibleThemeDark" parent="@style/Theme.Sherlock"></style>
 
     <style name="TitleBarTitleButton" parent="TitleBarButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:minWidth">@dimen/size_of_quick_buttons</item>
-        <item name="android:textColor">#fff</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
-		<item name="android:shadowColor">#BB000000</item>
-        <item name="android:shadowRadius">2.75</item>
     </style>
 
     <style name="TitleBarToggleButton" parent="SmallTitleBarButton">
@@ -28,14 +25,13 @@
         <item name="android:layout_width">@dimen/size_of_small_quick_buttons</item>
 	</style>
     
-    <style name="TitleBarButton">
-    	<item name="android:background">@drawable/btn_tiny</item>
+    <style name="TitleBarButton" parent="@style/Widget.Sherlock.ActionButton">
         <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_width">@dimen/size_of_quick_buttons</item>
 		<item name="android:layout_centerInParent">true</item>
 		<item name="android:textSize">12sp</item>
 		<item name="android:singleLine">true</item>
-		<item name="android:textColor">#FFFFF0</item>
+        <item name="android:textColor">@android:color/white</item>
 		<item name="android:paddingLeft">7dip</item>
 		<item name="android:paddingRight">7dip</item>
 		<item name="android:paddingBottom">0dip</item>
@@ -58,17 +54,16 @@
     </style>
     		
     <style name="SplashTitleFont" parent="@android:style/TextAppearance.Large">
-        <item name="android:textColor">#FFCC73</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textSize">20sp</item>
-        <item name="android:typeface">serif</item>
     </style>
     <style name="SplashTopFont" parent="@android:style/TextAppearance.Large">
-        <item name="android:textColor">#FFCC73</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:typeface">serif</item>
     </style>
     <style name="SplashBottomFont" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">#FFCC73</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">12sp</item>
         <item name="android:typeface">sans</item>
     </style>

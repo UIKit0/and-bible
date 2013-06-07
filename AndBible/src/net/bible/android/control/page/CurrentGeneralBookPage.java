@@ -7,7 +7,7 @@ import org.crosswire.jsword.book.BookCategory;
 import org.crosswire.jsword.passage.Key;
 
 import android.app.Activity;
-import android.view.Menu;
+import com.actionbarsherlock.view.Menu;
 
 /** Reference to current passage shown by viewer
  * 
@@ -75,7 +75,7 @@ public class CurrentGeneralBookPage extends CachedKeyPage implements CurrentPage
 	}
 	
 	@Override
-	public void updateContextMenu(Menu menu) {
+	public void updateContextMenu(android.view.Menu menu) {
 		super.updateContextMenu(menu);
 		// by default disable notes but bible will enable
 		menu.findItem(R.id.add_bookmark).setVisible(false);

@@ -15,6 +15,8 @@ import net.bible.service.common.CommonUtils;
 import org.crosswire.jsword.passage.Verse;
 import org.crosswire.jsword.versification.BibleBook;
 
+import com.actionbarsherlock.view.MenuItem;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -60,6 +62,8 @@ public class GridChoosePassageChapter extends ActivityBase implements OnButtonGr
         
         grid.addButtons(getBibleChaptersButtonInfo(mBibleBook));
         setContentView(grid);
+        
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     
     private List<ButtonInfo> getBibleChaptersButtonInfo(BibleBook book) {
@@ -117,5 +121,15 @@ public class GridChoosePassageChapter extends ActivityBase implements OnButtonGr
     	if (resultCode==Activity.RESULT_OK) {
     		returnToPreviousScreen();
     	}
+    }
+    
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 }

@@ -1,6 +1,6 @@
 package net.bible.android.view.activity.comparetranslations;
 
- import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.bible.android.activity.R;
@@ -35,26 +35,26 @@ import android.widget.ListView;
  */
 public class CompareTranslations extends ListActivityBase implements SwipeGestureEventHandler {
 	private static final String TAG = "CompareTranslations";
-	
-    private List<TranslationDto> mTranslations = new ArrayList<TranslationDto>();
-    private ArrayAdapter<TranslationDto> mKeyArrayAdapter;
-    
+
+	private List<TranslationDto> mTranslations = new ArrayList<TranslationDto>();
+	private ArrayAdapter<TranslationDto> mKeyArrayAdapter;
+
 	// detect swipe left/right
 	private GestureDetector gestureDetector;
 
 	private CompareTranslationsControl compareTranslationsControl = ControlFactory.getInstance().getCompareTranslationsControl();
 
-    public static final String VERSE = "net.bible.android.view.activity.comparetranslations.Verse";
+	public static final String VERSE = "net.bible.android.view.activity.comparetranslations.Verse";
 	private static final int LIST_ITEM_TYPE = android.R.layout.simple_list_item_2;
 
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, true);
-        Log.i(TAG, "Displaying Compare Translations view");
-        setContentView(R.layout.list);
-        
-        //fetch verse from intent if set - so that goto via History works nicely
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState, true);
+		Log.i(TAG, "Displaying Compare Translations view");
+		setContentView(R.layout.list);
+
+		//fetch verse from intent if set - so that goto via History works nicely
 		Bundle extras = getIntent().getExtras();
 		try {
 			if (extras != null) {
@@ -71,72 +71,74 @@ public class CompareTranslations extends ListActivityBase implements SwipeGestur
 
 		prepareScreenData();
 
-    	mKeyArrayAdapter = new ItemAdapter(this, LIST_ITEM_TYPE, mTranslations);
-        setListAdapter(mKeyArrayAdapter);
+		mKeyArrayAdapter = new ItemAdapter(this, LIST_ITEM_TYPE, mTranslations);
+		setListAdapter(mKeyArrayAdapter);
 
-        // create gesture related objects
-        gestureDetector = new GestureDetector( new SwipeGestureListener(this) );
-    }
-    
-    private void prepareScreenData() {
+		// create gesture related objects
+		gestureDetector = new GestureDetector( new SwipeGestureListener(this) );
 
-        setTitle(compareTranslationsControl.getTitle());
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	}
 
-        mTranslations.clear();
-        mTranslations.addAll(compareTranslationsControl.getAllTranslations());
-        
-        notifyDataSetChanged();
+	private void prepareScreenData() {
 
-        Log.d(TAG, "Finished displaying Compare Translations view");
-    }
+		setTitle(compareTranslationsControl.getTitle());
 
-    /** swiped left
-     */
-    @Override
+		mTranslations.clear();
+		mTranslations.addAll(compareTranslationsControl.getAllTranslations());
+
+		notifyDataSetChanged();
+
+		Log.d(TAG, "Finished displaying Compare Translations view");
+	}
+
+	/** swiped left
+	 */
+	@Override
 	public void onNext() {
-    	Log.d(TAG, "Next");
-    	compareTranslationsControl.next();
-    	prepareScreenData();
-    }
+		Log.d(TAG, "Next");
+		compareTranslationsControl.next();
+		prepareScreenData();
+	}
 
-    /** swiped right
-     */
-    @Override
+	/** swiped right
+	 */
+	@Override
 	public void onPrevious() {
-    	Log.d(TAG, "Previous");
-    	compareTranslationsControl.previous();
-    	prepareScreenData();
-    }
+		Log.d(TAG, "Previous");
+		compareTranslationsControl.previous();
+		prepareScreenData();
+	}
 
-    @Override
+	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-    	try {
-    		// no need to call HistoryManager.beforePageChange() here because PassageChangeMediator will tell HistoryManager a change is about to occur 
-    		
-	    	translationSelected(mTranslations.get(position));
+		try {
+			// no need to call HistoryManager.beforePageChange() here because PassageChangeMediator will tell HistoryManager a change is about to occur 
+
+			translationSelected(mTranslations.get(position));
 		} catch (Exception e) {
 			Log.e(TAG, "Selection error", e);
 			showErrorMsg(R.string.error_occurred);
 		}
 	}
-    
-    private void translationSelected(TranslationDto translationDto) {
-    	if (translationDto!=null) {
-        	Log.i(TAG, "chose:"+translationDto.getBook());
-        	
-        	compareTranslationsControl.showTranslation(translationDto);
-    		
-    		// this also calls finish() on this Activity.  If a user re-selects from HistoryList then a new Activity is created
-    		returnToPreviousScreen();
-    	}
-    }
 
-    /** implement getHistoryIntent to allow correct verse to be shown if history nav occurs
-     */
+	private void translationSelected(TranslationDto translationDto) {
+		if (translationDto!=null) {
+			Log.i(TAG, "chose:"+translationDto.getBook());
+
+			compareTranslationsControl.showTranslation(translationDto);
+
+			// this also calls finish() on this Activity.  If a user re-selects from HistoryList then a new Activity is created
+			returnToPreviousScreen();
+		}
+	}
+
+	/** implement getHistoryIntent to allow correct verse to be shown if history nav occurs
+	 */
 	@Override
 	public Intent getIntentForHistoryList() {
 		Intent intent = getIntent();
-		
+
 		intent.putExtra(VERSE, compareTranslationsControl.getVerse().getOsisID());
 
 		return intent;
@@ -148,4 +150,14 @@ public class CompareTranslations extends ListActivityBase implements SwipeGestur
 		this.gestureDetector.onTouchEvent(motionEvent);
 		return super.dispatchTouchEvent(motionEvent);
 	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
+    }
 }

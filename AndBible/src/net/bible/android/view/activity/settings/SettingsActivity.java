@@ -12,11 +12,12 @@ import net.bible.service.device.ScreenTimeoutSettings;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceActivity;
 import android.util.Log;
 
 /** show settings
@@ -25,7 +26,7 @@ import android.util.Log;
  * @see gnu.lgpl.License for license details.<br>
  *      The copyright to this program is held by it's author.
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends SherlockPreferenceActivity {
 
 	private static final String LOCALE_PREF = "locale_pref";
 	
@@ -76,6 +77,7 @@ public class SettingsActivity extends PreferenceActivity {
 			Log.e(TAG, "Error preparing preference screen", e);
 			Dialogs.getInstance().showErrorMsg(R.string.error_occurred);
 		}
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	
 	private void addScreenTimeoutSettings() {
@@ -111,4 +113,13 @@ public class SettingsActivity extends PreferenceActivity {
         CurrentActivityHolder.getInstance().iAmNoLongerCurrent(this);
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
+    }
 }

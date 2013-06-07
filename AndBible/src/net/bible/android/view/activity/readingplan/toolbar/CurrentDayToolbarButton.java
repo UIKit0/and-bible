@@ -22,6 +22,7 @@ public class CurrentDayToolbarButton extends ToolbarButtonBase implements Toolba
 	
 	public CurrentDayToolbarButton(View parent) {
         mButton = (Button)parent.findViewById(R.id.titlePassage);
+        mButton.setVisibility(View.VISIBLE);
 
         mButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {

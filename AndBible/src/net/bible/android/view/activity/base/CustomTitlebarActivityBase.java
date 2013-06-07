@@ -4,11 +4,9 @@ import net.bible.android.activity.R;
 import net.bible.android.control.ControlFactory;
 import net.bible.android.view.activity.base.toolbar.DefaultToolbar;
 import net.bible.android.view.activity.base.toolbar.Toolbar;
-
 import android.content.res.Configuration;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.ProgressBar;
 
 public abstract class CustomTitlebarActivityBase extends ActivityBase {
@@ -18,7 +16,6 @@ public abstract class CustomTitlebarActivityBase extends ActivityBase {
 	private View mTitleBar;
 	
 	private Toolbar mToolbar;
-	
 	private ProgressBar mProgressBarIndeterminate;
 
 	private View mContentView;
@@ -31,16 +28,19 @@ public abstract class CustomTitlebarActivityBase extends ActivityBase {
 	/** custom title bar code to add the FEATURE_CUSTOM_TITLE just before setContentView
 	 * and set the new titlebar layout just after
 	 */
+	
     @Override
 	public void setContentView(int layoutResID) {
-    	requestWindowFeature(Window.FEATURE_NO_TITLE);
+    	// CCHOW CHANGE START
+    	// don't ever hide actionbar 
+    	//requestWindowFeature(Window.FEATURE_NO_TITLE);
+    	// CCHOW CHANGE END
+    	
 		super.setContentView(layoutResID);
 
         mTitleBar = findViewById(R.id.titleBar);
         mContentView = mTitleBar.getRootView();
-        
         initialiseToolbar(mTitleBar);
-        
         mProgressBarIndeterminate = (ProgressBar)findViewById(R.id.progressCircular);
         
         // force the toolbar buttons to be shown correctly

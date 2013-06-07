@@ -57,6 +57,8 @@ public abstract class ChooseKeyBase extends ListActivityBase {
         }
         
         Log.d(TAG, "Finished displaying Search view");
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
@@ -108,5 +110,15 @@ public abstract class ChooseKeyBase extends ListActivityBase {
     	Intent resultIntent = new Intent(this, MainBibleActivity.class);
     	setResult(FINISHED, resultIntent);
     	finish();    
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 }

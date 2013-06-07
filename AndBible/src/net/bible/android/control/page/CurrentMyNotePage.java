@@ -11,7 +11,7 @@ import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
 
 import android.util.Log;
-import android.view.Menu;
+import com.actionbarsherlock.view.Menu;
 
 /** Provide information for My Note page
  * 
@@ -42,7 +42,7 @@ public class CurrentMyNotePage extends CurrentCommentaryPage implements CurrentP
 	}
 	
 	@Override
-	public void updateContextMenu(Menu menu) {
+	public void updateContextMenu(android.view.Menu menu) {
 		super.updateContextMenu(menu);
 
 		menu.findItem(R.id.myNoteAddEdit).setVisible(false);

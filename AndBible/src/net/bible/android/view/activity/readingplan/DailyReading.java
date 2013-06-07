@@ -21,15 +21,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 /** Allow user to enter search criteria
  * 
@@ -45,7 +45,8 @@ public class DailyReading extends CustomTitlebarActivityBase {
 	private TextView mDayView;
 	private TextView mDateView;
 	private List<ImageView> mImageTickList;
-	private Button mDoneButton;
+
+	private MenuItem mMenuItemAllDone;
 	
 	private int mDay;
 	
@@ -90,8 +91,6 @@ public class DailyReading extends CustomTitlebarActivityBase {
 	        mDayView.setText(mReadings.getDayDesc());
 	        mDateView =  (TextView)findViewById(R.id.date);
 	        mDateView.setText(mReadings.getReadingDateString());
-	
-	        mDoneButton = (Button)findViewById(R.id.doneButton);
 	        
 	        mImageTickList = new ArrayList<ImageView>();
 
@@ -169,6 +168,8 @@ public class DailyReading extends CustomTitlebarActivityBase {
         	Log.e(TAG, "Error showing daily readings", e);
         	Dialogs.getInstance().showErrorMsg(R.string.error_occurred);
         }
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     
     /** user pressed read button by 1 reading
@@ -217,7 +218,7 @@ public class DailyReading extends CustomTitlebarActivityBase {
     
     /** user pressed Done button so must have read currently displayed readings
      */
-    public void onDone(View view) {
+	private void onDone() {
     	Log.i(TAG, "Done");
     	try {
 	    	// do not add to History list because it will just redisplay same page
@@ -282,7 +283,10 @@ public class DailyReading extends CustomTitlebarActivityBase {
 			}
 		}
 		
-		mDoneButton.setEnabled(status.isAllRead());
+		if (mMenuItemAllDone != null) {
+			mMenuItemAllDone.setEnabled(status.isAllRead());
+			supportInvalidateOptionsMenu();
+		}
 	}
 	
 	
@@ -325,10 +329,18 @@ public class DailyReading extends CustomTitlebarActivityBase {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.reading_plan, menu);
+		getSupportMenuInflater().inflate(R.menu.reading_plan, menu);
+		mMenuItemAllDone = menu.findItem(R.id.alldone);
         return true;
     }
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		ReadingStatus status = mReadingPlanControl.getReadingStatus(mDay);
+		mMenuItemAllDone.setEnabled(status.isAllRead());
+		return true;
+	}
 
 	/** 
      * on Click handlers
@@ -338,6 +350,10 @@ public class DailyReading extends CustomTitlebarActivityBase {
         boolean isHandled = false;
         
         switch (item.getItemId()) {
+		// action bar up
+		case (android.R.id.home):
+			onBackPressed();
+		break;
         // selected to allow jump to a certain day
 		case (R.id.done):
 	    	Log.i(TAG, "Force Done");
@@ -365,6 +381,11 @@ public class DailyReading extends CustomTitlebarActivityBase {
 	        mDateView.setText(mReadings.getReadingDateString());
 			mDayView.setText(mReadings.getDayDesc());
 			
+			isHandled = true;
+			break;
+		// all done button
+		case (R.id.alldone):
+			onDone();
 			isHandled = true;
 			break;
         }

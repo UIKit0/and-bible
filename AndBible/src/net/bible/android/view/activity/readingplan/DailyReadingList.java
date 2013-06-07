@@ -23,58 +23,70 @@ import android.widget.ListView;
 public class DailyReadingList extends ListActivityBase {
 
 	private static final String TAG = "DailyReadingList";
-	
+
 	private ReadingPlanControl mReadingPlanControl = ControlFactory.getInstance().getReadingPlanControl();
-	
+
 	private List<OneDaysReadingsDto> mReadingsList;
-    private ArrayAdapter<OneDaysReadingsDto> mAdapter;
+	private ArrayAdapter<OneDaysReadingsDto> mAdapter;
 
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, true);
-        Log.i(TAG, "Displaying General Book Key chooser");
-        setContentView(R.layout.list);
-    
-        prepareList();
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState, true);
+		Log.i(TAG, "Displaying General Book Key chooser");
+		setContentView(R.layout.list);
 
-        mAdapter = new DailyReadingItemAdapter(this, android.R.layout.simple_list_item_2, mReadingsList);
-        setListAdapter(mAdapter);
-        
-        getListView().setFastScrollEnabled(true);
-        
-        Log.d(TAG, "Finished displaying Search view");
-    }
+		prepareList();
 
-    /**
-     * Creates and returns a list adapter for the current list activity
-     * @return
-     */
-    protected void prepareList()
-    {
-    	Log.d(TAG, "Readingss");
-    	mReadingsList = mReadingPlanControl.getCurrentPlansReadingList();
-    }
-    
-    @Override
+		mAdapter = new DailyReadingItemAdapter(this, android.R.layout.simple_list_item_2, mReadingsList);
+		setListAdapter(mAdapter);
+
+		getListView().setFastScrollEnabled(true);
+
+		Log.d(TAG, "Finished displaying daily reading list view");
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+
+	/**
+	 * Creates and returns a list adapter for the current list activity
+	 * @return
+	 */
+	protected void prepareList()
+	{
+		Log.d(TAG, "Readingss");
+		mReadingsList = mReadingPlanControl.getCurrentPlansReadingList();
+	}
+
+	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-    	try {
-    		itemSelected(mReadingsList.get(position));
+		try {
+			itemSelected(mReadingsList.get(position));
 		} catch (Exception e) {
 			Log.e(TAG, "Selection error", e);
 			showErrorMsg(R.string.error_occurred);
 		}
 	}
-    
-    private void itemSelected(OneDaysReadingsDto oneDaysReadingsDto) {
-    	Log.d(TAG, "Day selected:"+oneDaysReadingsDto);
-    	try {
+
+	private void itemSelected(OneDaysReadingsDto oneDaysReadingsDto) {
+		Log.d(TAG, "Day selected:"+oneDaysReadingsDto);
+		try {
 			Intent intent = new Intent(this, DailyReading.class);
 			intent.putExtra(DailyReading.DAY, oneDaysReadingsDto.getDay());
 			startActivity(intent);
 			finish();
-    	} catch (Exception e) {
-    		Log.e(TAG, "error on select of gen book key", e);
-    	}
-    }
+		} catch (Exception e) {
+			Log.e(TAG, "error on select of gen book key", e);
+		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			onBackPressed();
+		} else {
+			return super.onOptionsItemSelected(item);
+		}
+		return false;
+	}
 }

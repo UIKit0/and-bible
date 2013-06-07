@@ -20,8 +20,8 @@ import org.crosswire.jsword.versification.Versification;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 /** Reference to current passage shown by viewer
  * 
@@ -265,13 +265,13 @@ public class CurrentBiblePage extends VersePage implements CurrentPage {
 	}
 
 	@Override
-	public void updateContextMenu(Menu menu) {
+	public void updateContextMenu(android.view.Menu menu) {
 		super.updateContextMenu(menu);
 		// by default disable notes but bible will enable
 		menu.findItem(R.id.notes).setVisible(true);
 		
 		// by default disable mynotes but bible and commentary will enable
-		MenuItem myNotesMenuItem = menu.findItem(R.id.myNoteAddEdit);
+		android.view.MenuItem myNotesMenuItem = menu.findItem(R.id.myNoteAddEdit);
 		myNotesMenuItem.setVisible(true);
 		myNotesMenuItem.setTitle(ControlFactory.getInstance().getMyNoteControl().getAddEditMenuText());
 

@@ -11,7 +11,7 @@ import org.crosswire.jsword.passage.Key;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.view.Menu;
+import com.actionbarsherlock.view.Menu;
 
 public interface CurrentPage {
 
@@ -67,7 +67,7 @@ public interface CurrentPage {
 	public List<Note> getCurrentPageFootnotesAndReferences() throws ParseException;
 
 	public abstract void updateOptionsMenu(Menu menu);
-	public abstract void updateContextMenu(Menu menu);
+	public abstract void updateContextMenu(android.view.Menu menu);
 
 	public abstract void restoreState(SharedPreferences inState, String screenId);
 

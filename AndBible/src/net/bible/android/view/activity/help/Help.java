@@ -17,15 +17,27 @@ import android.widget.TextView;
 public class Help extends ActivityBase {
 	private static final String TAG = "Help";
 
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.i(TAG, "Displaying Help view");
-        setContentView(R.layout.help);
-        
-        TextView versionTextView = (TextView)findViewById(R.id.versionText);
-        String versionMsg = BibleApplication.getApplication().getString(R.string.version_text, CommonUtils.getApplicationVersionName());
-        versionTextView.setText(versionMsg);
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Log.i(TAG, "Displaying Help view");
+		setContentView(R.layout.help);
+
+		TextView versionTextView = (TextView)findViewById(R.id.versionText);
+		String versionMsg = BibleApplication.getApplication().getString(R.string.version_text, CommonUtils.getApplicationVersionName());
+		versionTextView.setText(versionMsg);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 }

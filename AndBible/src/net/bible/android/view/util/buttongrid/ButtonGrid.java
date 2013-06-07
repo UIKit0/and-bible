@@ -75,6 +75,7 @@ public class ButtonGrid extends TableLayout {
 
         // use generic ViewGroup LayoutParams for Table because we don't know what the parent is
 		setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		setBackgroundColor(Color.DKGRAY);
 		setStretchAllColumns(true);
     }
     

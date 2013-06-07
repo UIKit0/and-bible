@@ -1,91 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generic status screen
+<!--
+ Generic status screen
  
  @author Martin Denham [mjdenham at gmail dot com]
  @see gnu.lgpl.License for license details.<br>
       The copyright to this program is held by it's author.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainBibleViewContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-   	<include layout="@layout/title_bar"
-   	    android:id="@+id/titleBar"
-   	    android:layout_alignParentTop="true"/>
-   	
-    <LinearLayout android:id="@+id/top_text"
-        android:orientation="vertical"
+    android:fadingEdgeLength="0sp"
+    android:orientation="vertical" >
+
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/titleBar"
-    	android:layout_margin="10dip">
-	   	<TextView android:id="@+id/description"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_height="wrap_content" 
-			android:layout_width="wrap_content"/>
-	   	
-	    <LinearLayout android:id="@+id/dates"
-	        android:orientation="horizontal"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
 
-	        <TextView android:id="@+id/date"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:layout_height="wrap_content" 
-				android:layout_width="wrap_content"/>
-	        <TextView android:id="@+id/day"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:layout_height="wrap_content" 
-				android:layout_width="fill_parent"
-				android:gravity="right"/>
-	        
-	  	</LinearLayout>
-	        	
-	   	<TextView android:id="@+id/status_message"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_height="wrap_content" 
-			android:layout_width="wrap_content"/>
-   	</LinearLayout>
+        <LinearLayout
+            android:id="@+id/top_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dip"
+            android:orientation="vertical" >
 
-    <!-- container for daily readings -->
-    <TableLayout android:id="@+id/reading_container"
-	    android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:layout_margin="10dip"
-		android:layout_below="@id/top_text"
-		android:shrinkColumns="1"
-		android:stretchColumns="1,2,3">
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    </TableLayout>
-    
-	<!-- Button bar -->
-	<LinearLayout android:id="@+id/button_panel"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true"
-	    android:orientation="horizontal"
-	    style="@android:style/ButtonBar">
-	    <!-- Left spacer -->
-	    <View
-	        android:layout_width="0dip"
-	        android:layout_height="fill_parent"
-	        android:layout_weight="1"/>
-	
-	 	<Button android:id="@+id/doneButton"
- 			android:text="@string/done"
-			android:onClick="onDone"
-	        android:layout_width="0dip"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="2"/>
+            <LinearLayout
+                android:id="@+id/dates"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
 
-	    <!-- Right spacer -->
-	    <View
-	        android:layout_width="0dip"
-	        android:layout_height="fill_parent"
-	        android:layout_weight="1"
-	    />
-	</LinearLayout>
-		
-</RelativeLayout>
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
+                <TextView
+                    android:id="@+id/day"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/status_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+
+        <!-- container for daily readings -->
+
+        <TableLayout
+            android:id="@+id/reading_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/top_text"
+            android:layout_margin="10dip"
+            android:shrinkColumns="1"
+            android:stretchColumns="1,2,3" >
+        </TableLayout>
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/titleBar"
+        layout="@layout/title_bar" />
+
+</LinearLayout>

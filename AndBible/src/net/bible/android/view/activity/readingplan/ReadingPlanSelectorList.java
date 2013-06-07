@@ -55,6 +55,8 @@ public class ReadingPlanSelectorList extends ListActivityBase {
         	finish();
         }
     	Log.d(TAG, "Finished displaying Reading Plan list");
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
  
     /** if a plan is selected then ask confirmation, save plan, and go straight to first day
@@ -96,4 +98,14 @@ public class ReadingPlanSelectorList extends ListActivityBase {
 		}
 		return false; 
 	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+}
+        return false;
+    }
 }

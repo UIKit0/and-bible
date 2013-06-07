@@ -55,6 +55,8 @@ public class BookmarkLabels extends ListActivityBase {
         bookmark = bookmarkControl.getBookmarkById(bookmarkId);
 
         initialiseView();
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void initialiseView() {
@@ -224,4 +226,13 @@ public class BookmarkLabels extends ListActivityBase {
     	// ensure ui is updated
 		notifyDataSetChanged();
 	}
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+		}
+        return false;
+    }
 }

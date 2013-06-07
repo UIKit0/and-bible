@@ -19,7 +19,7 @@ import org.crosswire.jsword.passage.Key;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Menu;
+import com.actionbarsherlock.view.Menu;
 
 /** Common functionality for different document page types
  * 
@@ -195,7 +195,7 @@ abstract class CurrentPageBase implements CurrentPage {
 	}
 	
 	@Override
-	public void updateContextMenu(Menu menu) {
+	public void updateContextMenu(android.view.Menu menu) {
 		// by default disable notes but bible will enable
 		menu.findItem(R.id.notes).setVisible(false);	
 		menu.findItem(R.id.myNoteAddEdit).setVisible(false);	

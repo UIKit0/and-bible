@@ -31,8 +31,11 @@ public class DefaultToolbar implements Toolbar {
 	public void initialise(View buttonContainer) {
 		// buttons should be added in priority order
         mToolbarButtonList = new ArrayList<ToolbarButton>();
+        //document and page buttons moved into actionbar
+        /*
         mToolbarButtonList.add(new CurrentDocumentToolbarButton(buttonContainer));
         mToolbarButtonList.add(new CurrentPageToolbarButton(buttonContainer));
+        */
         mToolbarButtonList.add(new BibleToolbarButton(buttonContainer));
         mToolbarButtonList.add(new CommentaryToolbarButton(buttonContainer));
         mToolbarButtonList.add(new StrongsToolbarButton(buttonContainer));

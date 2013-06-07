@@ -101,6 +101,7 @@ abstract public class DocumentSelectionBase extends ListActivityBase {
        	initialiseView();
        	
     	registerForContextMenu(getListView());
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void initialiseView() {
@@ -501,5 +502,15 @@ abstract public class DocumentSelectionBase extends ListActivityBase {
 			case MAPS:				selectedDocumentFilterNo = 4;  		break;
 			default:				selectedDocumentFilterNo = 0;  		break;
     	}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
 	}
 }

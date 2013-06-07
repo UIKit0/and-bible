@@ -101,6 +101,7 @@ public class Search extends ActivityBase {
 		currentBookRadioButton.setText(searchControl.getCurrentBookDescription());
 		
         Log.d(TAG, "Finished displaying Search view");
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void onSearch(View v) {
@@ -181,5 +182,15 @@ public class Search extends ActivityBase {
     	if (resultCode==Activity.RESULT_OK) {
     		returnToPreviousScreen();
     	}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			onBackPressed();
+		} else {
+			return super.onOptionsItemSelected(item);
+		}
+		return false;
     }
 }

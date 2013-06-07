@@ -15,14 +15,14 @@ import net.bible.service.sword.SwordDocumentFacade;
 import org.crosswire.common.progress.JobManager;
 import org.crosswire.jsword.book.Book;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 /**
@@ -195,8 +195,7 @@ public class Download extends DocumentSelectionBase {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.download_documents, menu);
+        getSupportMenuInflater().inflate(R.menu.download_documents, menu);
         return true;
     }
 

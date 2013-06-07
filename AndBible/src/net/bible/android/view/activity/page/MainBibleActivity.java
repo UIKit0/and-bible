@@ -8,6 +8,9 @@ import net.bible.android.control.ControlFactory;
 import net.bible.android.control.PassageChangeMediator;
 import net.bible.android.control.event.apptobackground.AppToBackgroundEvent;
 import net.bible.android.control.event.apptobackground.AppToBackgroundListener;
+import net.bible.android.control.event.passage.PassageEvent;
+import net.bible.android.control.event.passage.PassageEventListener;
+import net.bible.android.control.event.passage.PassageEventManager;
 import net.bible.android.control.event.splitscreen.SplitScreenEventListener;
 import net.bible.android.control.page.CurrentPageManager;
 import net.bible.android.control.page.splitscreen.SplitScreenControl;
@@ -26,11 +29,12 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 /** The main activity screen showing Bible text
  * 
@@ -60,6 +64,11 @@ public class MainBibleActivity extends CustomTitlebarActivityBase {
 	private long lastContextMenuCreateTimeMillis;
 
     /** Called when the activity is first created. */
+	private MenuItem mMenuItemChoosePassage;
+	private MenuItem mMenuItemChooseDocument;
+	private String passage = "";
+	private String document = "";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 		Log.i(TAG, "Creating MainBibleActivity");
@@ -103,7 +112,19 @@ public class MainBibleActivity extends CustomTitlebarActivityBase {
 			
 			@Override
 			public void currentSplitScreenChanged(Screen activeScreen) {
-				MainBibleActivity.this.updateToolbarButtonText();				
+				MainBibleActivity.this.updateToolbarButtonText();
+				// update actionbar page and document buttons
+				document = ControlFactory.getInstance()
+						.getPageControl().getCurrentDocumentTitle();
+				passage = ControlFactory.getInstance().getPageControl()
+						.getCurrentPageTitle();
+				runOnUiThread(new Runnable() {
+					public void run() {
+						mMenuItemChooseDocument.setTitle(document);
+						mMenuItemChoosePassage.setTitle(passage);
+						supportInvalidateOptionsMenu();
+					}
+				});
 			}
 			
 			@Override
@@ -123,6 +144,24 @@ public class MainBibleActivity extends CustomTitlebarActivityBase {
 				// Noop
 			}
 		});
+
+		// passage event listener for verse change events for action bar buttons
+		PassageEventManager.getInstance().addPassageEventListener(
+				new PassageEventListener() {
+					@Override
+					public void pageDetailChange(PassageEvent event) {
+						passage = ControlFactory.getInstance().getPageControl()
+								.getCurrentPageTitle();
+						if (mMenuItemChoosePassage != null) {
+							runOnUiThread(new Runnable() {
+								public void run() {
+									mMenuItemChoosePassage.setTitle(passage);
+									supportInvalidateOptionsMenu();
+								}
+							});
+						}
+					}
+				});
     }
 
     /** called if the app is re-entered after returning from another app.
@@ -229,6 +268,14 @@ public class MainBibleActivity extends CustomTitlebarActivityBase {
     		preferenceSettingsChanged();
     	} else if (mainMenuCommandHandler.isDocumentChanged(requestCode)) {
     		updateToolbarButtonText();
+			// update actionbar page and document buttons
+			document = ControlFactory.getInstance().getPageControl()
+					.getCurrentDocumentTitle();
+			mMenuItemChooseDocument.setTitle(document);
+			passage = ControlFactory.getInstance().getPageControl()
+					.getCurrentPageTitle();
+			mMenuItemChoosePassage.setTitle(passage);
+			supportInvalidateOptionsMenu();
     	}
     }
 
@@ -286,8 +333,16 @@ public class MainBibleActivity extends CustomTitlebarActivityBase {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+		getSupportMenuInflater().inflate(R.menu.main, menu);
+
+		// prepare actionbar page and document buttons
+		mMenuItemChooseDocument = menu.findItem(R.id.chooseBookButton);
+		mMenuItemChoosePassage = menu.findItem(R.id.selectPassageButton);
+
+		document = ControlFactory.getInstance().getPageControl()
+				.getCurrentDocumentTitle();
+		passage = ControlFactory.getInstance().getPageControl()
+				.getCurrentPageTitle();
         return true;
     }
     
@@ -299,6 +354,10 @@ public class MainBibleActivity extends CustomTitlebarActivityBase {
 		
 		// if there is no backup file then disable the restore menu item
 		ControlFactory.getInstance().getBackupControl().updateOptionsMenu(menu);
+
+		// update actionbar page and document buttons
+		mMenuItemChooseDocument.setTitle(document);
+		mMenuItemChoosePassage.setTitle(passage);
 		
 		// must return true for menu to be displayed
 		return true;
@@ -351,8 +410,9 @@ public class MainBibleActivity extends CustomTitlebarActivityBase {
 	}
 
     @Override
-	public boolean onContextItemSelected(MenuItem item) {
-        boolean isHandled = mainMenuCommandHandler.handleMenuRequest(item.getItemId());
+	public boolean onContextItemSelected(android.view.MenuItem item) {
+		boolean isHandled = mainMenuCommandHandler.handleMenuRequest(item
+				.getItemId());
         
      	if (!isHandled) {
             isHandled = super.onContextItemSelected(item);

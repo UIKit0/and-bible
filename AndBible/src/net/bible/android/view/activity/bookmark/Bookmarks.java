@@ -77,6 +77,7 @@ public class Bookmarks extends ListActivityBase {
 		}
         
        	initialiseView();
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void initialiseView() {
@@ -236,5 +237,15 @@ public class Bookmarks extends ListActivityBase {
     	Intent resultIntent = new Intent();
     	setResult(Activity.RESULT_OK, resultIntent);
     	finish();    
+	}
+	
+    @Override
+    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 }

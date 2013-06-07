@@ -39,6 +39,8 @@ public class History extends ListActivityBase {
         setListAdapter(createAdapter());
         
         Log.d(TAG, "Finished displaying Search view");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
@@ -79,5 +81,15 @@ public class History extends ListActivityBase {
     	Intent resultIntent = new Intent();
     	setResult(Activity.RESULT_OK, resultIntent);
     	finish();    
+    }
+    
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 }

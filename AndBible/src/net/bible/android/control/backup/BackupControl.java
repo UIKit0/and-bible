@@ -10,8 +10,8 @@ import net.bible.service.common.FileManager;
 import net.bible.service.db.CommonDatabaseHelper;
 import android.os.Environment;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
  * @author Martin Denham [mjdenham at gmail dot com]

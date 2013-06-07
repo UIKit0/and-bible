@@ -1,8 +1,10 @@
 package net.bible.android.view.activity.base;
 
+import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import net.bible.android.view.util.UiUtils;
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,52 +19,52 @@ import android.widget.ListAdapter;
  * @see gnu.lgpl.License for license details.<br>
  *      The copyright to this program is held by it's author.
  */
-public class ListActivityBase extends ListActivity implements AndBibleActivity {
+public class ListActivityBase extends SherlockListActivity implements AndBibleActivity {
 
 	private CommonActivityBase commonActivityBase = new CommonActivityBase();
-	
+
 	private static final String TAG = "ListActivityBase";
-	
-    public ListActivityBase() {
+
+	public ListActivityBase() {
 		super();
 	}
-    
-	/** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-    	this.onCreate(savedInstanceState, false);
-    }
 
-    /** Called when the activity is first created. */
-    public void onCreate(Bundle savedInstanceState, boolean integrateWithHistoryManager) {
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		this.onCreate(savedInstanceState, false);
+	}
+
+	/** Called when the activity is first created. */
+	public void onCreate(Bundle savedInstanceState, boolean integrateWithHistoryManager) {
 		UiUtils.applyTheme(this);
 
-        super.onCreate(savedInstanceState);
-        Log.i(getLocalClassName(), "onCreate");
+		super.onCreate(savedInstanceState);
+		Log.i(getLocalClassName(), "onCreate");
 
-        // Register current activity in onCreate and onresume
-        CurrentActivityHolder.getInstance().setCurrentActivity(this);
+		// Register current activity in onCreate and onresume
+		CurrentActivityHolder.getInstance().setCurrentActivity(this);
 
-        // fix for null context class loader (http://code.google.com/p/android/issues/detail?id=5697)
-        // this affected jsword dynamic classloading
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+		// fix for null context class loader (http://code.google.com/p/android/issues/detail?id=5697)
+		// this affected jsword dynamic classloading
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-        setFullScreen(SharedActivityState.getInstance().isFullScreen());
-        
+		setFullScreen(SharedActivityState.getInstance().isFullScreen());
+
 		commonActivityBase.setIntegrateWithHistoryManager(integrateWithHistoryManager);
-    }
+	}
 
-    @Override
+	@Override
 	public void startActivity(Intent intent) {
-    	commonActivityBase.beforeStartActivity();
-    	
+		commonActivityBase.beforeStartActivity();
+
 		super.startActivity(intent);
 	}
 	@Override
 	public void startActivityForResult(Intent intent, int requestCode) {
-    	commonActivityBase.beforeStartActivity();
+		commonActivityBase.beforeStartActivity();
 
-    	super.startActivityForResult(intent, requestCode);
+		super.startActivityForResult(intent, requestCode);
 	}
 
 	/**	This will be called automatically for you on 2.0 or later
@@ -73,7 +75,7 @@ public class ListActivityBase extends ListActivity implements AndBibleActivity {
 			super.onBackPressed();
 		}
 	}
-	
+
 	/** called by Android 2.0 +
 	 */
 	@Override
@@ -84,35 +86,35 @@ public class ListActivityBase extends ListActivity implements AndBibleActivity {
 		}
 
 		//TODO make Long press work for screens other than main window e.g. does not work from search screen because wrong window is displayed 
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	// just goBack for now rather than displaying History list
-	    	commonActivityBase.goBack();
-	    	return true;
-	    }
-	    
-	    return super.onKeyLongPress(keyCode, event);
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			// just goBack for now rather than displaying History list
+			commonActivityBase.goBack();
+			return true;
+		}
+
+		return super.onKeyLongPress(keyCode, event);
 	}
-	
+
 	private void setFullScreen(boolean isFullScreen) {
-    	if (!isFullScreen) {
-    		Log.d(TAG, "NOT Fullscreen");
-    		// http://stackoverflow.com/questions/991764/hiding-title-in-a-fullscreen-mode
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    	} else {
-    		Log.d(TAG, "Fullscreen");
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-    	}
+		if (!isFullScreen) {
+			Log.d(TAG, "NOT Fullscreen");
+			// http://stackoverflow.com/questions/991764/hiding-title-in-a-fullscreen-mode
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		} else {
+			Log.d(TAG, "Fullscreen");
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+		}
 	}
 
 	protected void notifyDataSetChanged() {
 		ListAdapter listAdapter = getListAdapter();
-    	if (listAdapter!=null && listAdapter instanceof ArrayAdapter) {
-    		((ArrayAdapter<?>)listAdapter).notifyDataSetChanged();
-    	} else {
-    		Log.w(TAG, "Could not update list Array Adapter");
-    	}
+		if (listAdapter!=null && listAdapter instanceof ArrayAdapter) {
+			((ArrayAdapter<?>)listAdapter).notifyDataSetChanged();
+		} else {
+			Log.w(TAG, "Could not update list Array Adapter");
+		}
 	}
 
 	@Override
@@ -124,7 +126,7 @@ public class ListActivityBase extends ListActivity implements AndBibleActivity {
 		commonActivityBase.setIntegrateWithHistoryManager(integrateWithHistoryManager);
 	}
 
-    /** allow activity to enhance intent to correctly restore state */
+	/** allow activity to enhance intent to correctly restore state */
 	public Intent getIntentForHistoryList() {
 		return getIntent();
 	}
@@ -138,50 +140,50 @@ public class ListActivityBase extends ListActivity implements AndBibleActivity {
 	}
 
 	protected void showHourglass() {
-    	Dialogs.getInstance().showHourglass();
-    }
-    protected void dismissHourglass() {
-    	Dialogs.getInstance().dismissHourglass();
-    }
+		Dialogs.getInstance().showHourglass();
+	}
+	protected void dismissHourglass() {
+		Dialogs.getInstance().dismissHourglass();
+	}
 
 	protected void returnToPreviousScreen() {
-    	// just pass control back to the previous screen
-    	Intent resultIntent = new Intent(this, this.getClass());
-    	setResult(Activity.RESULT_OK, resultIntent);
-    	finish();    
-    }
+		// just pass control back to the previous screen
+		Intent resultIntent = new Intent(this, this.getClass());
+		setResult(Activity.RESULT_OK, resultIntent);
+		finish();    
+	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-        Log.i(getLocalClassName(), "onResume");
-        // Register current activity in onCreate and onresume
-        CurrentActivityHolder.getInstance().setCurrentActivity(this);
+		Log.i(getLocalClassName(), "onResume");
+		// Register current activity in onCreate and onresume
+		CurrentActivityHolder.getInstance().setCurrentActivity(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-        Log.i(getLocalClassName(), "onPause");
+		Log.i(getLocalClassName(), "onPause");
 	}
 
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-        Log.i(getLocalClassName(), "onRestart");
+		Log.i(getLocalClassName(), "onRestart");
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-        Log.i(getLocalClassName(), "onStart");
+		Log.i(getLocalClassName(), "onStart");
 	}
 
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-        Log.i(getLocalClassName(), "onStop");
-        CurrentActivityHolder.getInstance().iAmNoLongerCurrent(this);
+		Log.i(getLocalClassName(), "onStop");
+		CurrentActivityHolder.getInstance().iAmNoLongerCurrent(this);
 	}
 }

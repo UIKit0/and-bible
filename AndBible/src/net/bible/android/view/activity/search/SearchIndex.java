@@ -32,6 +32,7 @@ public class SearchIndex extends ActivityBase {
         setContentView(R.layout.search_index);
     
         Log.d(TAG, "Finished displaying Search Index view");
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);  
     }
 
     /** Download the index from the sam place that Pocket Sword uses
@@ -99,5 +100,15 @@ public class SearchIndex extends ActivityBase {
 		
 		startActivity(intent);
 		finish();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			onBackPressed();
+		} else {
+			return super.onOptionsItemSelected(item);
+		}
+		return false;
 	}
 }

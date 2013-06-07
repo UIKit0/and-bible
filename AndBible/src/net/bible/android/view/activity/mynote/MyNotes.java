@@ -53,6 +53,8 @@ public class MyNotes extends ListActivityBase {
         myNoteControl = ControlFactory.getInstance().getMyNoteControl();
         
        	initialiseView();
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void initialiseView() {
@@ -126,5 +128,15 @@ public class MyNotes extends ListActivityBase {
     		Log.e(TAG, "Error on attempt to show note", e);
     		Dialogs.getInstance().showErrorMsg(R.string.error_occurred);
     	}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+        	onBackPressed();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 }
