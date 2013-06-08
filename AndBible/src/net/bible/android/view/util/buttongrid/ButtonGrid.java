@@ -41,23 +41,23 @@ public class ButtonGrid extends TableLayout {
 		private int bottom;
 		private int left;
 		private int right;
-		
+
 		private int rowNo;
 		private int colNo;
 	}
 
 	private ButtonInfo mCurrentPreview;
-    private TextView mPreviewText;
-    private PopupWindow mPreviewPopup;
-    private int mPreviewOffset;
-    private int mPreviewHeight;
+	private TextView mPreviewText;
+	private PopupWindow mPreviewPopup;
+	private int mPreviewOffset;
+	private int mPreviewHeight;
 	private static final int PREVIEW_HEIGHT_DIP = 70;
-	
+
 	private OnButtonGridActionListener onButtonGridActionListener;
 
 	private List<ButtonInfo> buttonInfoList;
 	private RowColLayout mRowColLayout;
-	
+
 	private ButtonInfo mPressed;
 	private Context mContext;
 	private boolean isInitialised = false;
@@ -66,32 +66,32 @@ public class ButtonGrid extends TableLayout {
 	private static final String TAG = "ButtonGrid";
 
 	public ButtonGrid(Context context) {
-        this(context, null, 0);
+		this(context, null, 0);
 	}
 
-    public ButtonGrid(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs);
-        this.mContext = context;
+	public ButtonGrid(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs);
+		this.mContext = context;
 
-        // use generic ViewGroup LayoutParams for Table because we don't know what the parent is
+		// use generic ViewGroup LayoutParams for Table because we don't know what the parent is
 		setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		setBackgroundColor(Color.DKGRAY);
 		setStretchAllColumns(true);
-    }
-    
-    /** Called during initialisation to add the list of buttons to be laid out on the screen
-     * 
-     * @param buttonInfoList
-     */
-    public void addButtons(List<ButtonInfo> buttonInfoList) {
-    	this.buttonInfoList = buttonInfoList;
-    	int numButtons = buttonInfoList.size();
+	}
+
+	/** Called during initialisation to add the list of buttons to be laid out on the screen
+	 * 
+	 * @param buttonInfoList
+	 */
+	public void addButtons(List<ButtonInfo> buttonInfoList) {
+		this.buttonInfoList = buttonInfoList;
+		int numButtons = buttonInfoList.size();
 		int textSize = getResources().getInteger(R.integer.grid_cell_text_size_sp);
-    	
-    	// calculate the number of rows and columns so that the grid looks nice
-    	mRowColLayout = new LayoutDesigner().calculateLayout(buttonInfoList); 
-		
-    	TableLayout.LayoutParams rowInTableLp = new TableLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1.0f);
+
+		// calculate the number of rows and columns so that the grid looks nice
+		mRowColLayout = new LayoutDesigner().calculateLayout(buttonInfoList); 
+
+		TableLayout.LayoutParams rowInTableLp = new TableLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1.0f);
 		TableRow.LayoutParams cellInRowLp = new TableRow.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1.0f);
 
 		int iCellNo = 0;
@@ -115,11 +115,11 @@ public class ButtonGrid extends TableLayout {
 					button.setTextColor(buttonInfo.textColor);
 					// set pad to 0 prevents text being pushed off the bottom of buttons on small screens
 					button.setPadding(0, 0, 0, 0);
-					
+
 					buttonInfo.button = button;
 					buttonInfo.rowNo = iRow;
 					buttonInfo.colNo = iCol;
-					
+
 					row.addView(button, cellInRowLp);
 				} else {
 					TextView spacer = new TextView(mContext);
@@ -136,19 +136,19 @@ public class ButtonGrid extends TableLayout {
 		mPreviewPopup.setContentView(mPreviewText);
 		mPreviewPopup.setBackgroundDrawable(null);
 		mPreviewPopup.setTouchable(false);
-        mPreviewText.setCompoundDrawables(null, null, null, null);
-        
-        float scale = mContext.getResources().getDisplayMetrics().density;
-        mPreviewHeight = (int)(PREVIEW_HEIGHT_DIP*scale);
+		mPreviewText.setCompoundDrawables(null, null, null, null);
+
+		float scale = mContext.getResources().getDisplayMetrics().density;
+		mPreviewHeight = (int)(PREVIEW_HEIGHT_DIP*scale);
 	}
 
-    
+
 	/* (non-Javadoc)
 	 * @see android.view.ViewGroup#onInterceptTouchEvent(android.view.MotionEvent)
 	 */
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event) {
-		
+
 		// wait until the columns have been layed out and adjusted before recording button positions
 		if (!isInitialised) {
 			synchronized (buttonInfoList) {
@@ -158,23 +158,30 @@ public class ButtonGrid extends TableLayout {
 				}
 			}
 		}
-		
+
 		/*
-         * This method JUST determines whether we want to intercept the motion.
-         * If we return true, onMotionEvent will be called and we do the actual
-         * scrolling there.
-         */
+		 * This method JUST determines whether we want to intercept the motion.
+		 * If we return true, onMotionEvent will be called and we do the actual
+		 * scrolling there.
+		 */
 		return true;
 	}
-	
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
 
-    	switch (event.getAction()) {
-    	case MotionEvent.ACTION_DOWN :
-    	case MotionEvent.ACTION_MOVE :
-    		ButtonInfo but = findButton((int)event.getX(), (int)event.getY());
-			if (but!=null) {
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		ButtonInfo but = findButton((int)event.getX(), (int)event.getY());
+		switch (event.getAction()) {
+		case MotionEvent.ACTION_DOWN :
+		case MotionEvent.ACTION_MOVE :
+			if (but == null) {
+				if (mPressed!=null) {
+					mPressed.button.setPressed(false);
+					mPressed = null;
+				}
+				if (mPreviewPopup.isShowing()) {
+					mPreviewPopup.dismiss();
+				}
+			} else {
 				// show the button being pressed
 				if (!but.equals(mPressed)) {
 					if (mPressed!=null) {
@@ -186,37 +193,45 @@ public class ButtonGrid extends TableLayout {
 				}
 			}
 			break;
-    	case MotionEvent.ACTION_UP :
-    		if (mPressed!=null) {
-    			buttonSelected(mPressed);
-    		}
-    		break;
-    	}
-    	
+		case MotionEvent.ACTION_UP :
+			if (but == null) {
+				if (mPressed!=null) {
+					mPressed.button.setPressed(false);
+					mPressed = null;
+				}
+				if (mPreviewPopup.isShowing()) {
+					mPreviewPopup.dismiss();
+				}
+			} else if (mPressed!=null) {
+				buttonSelected(mPressed);
+			}
+			break;
+		}
+
 		return true; //super.onInterceptTouchEvent(ev);
 	}
 
-    private ButtonInfo findButton(int x, int y) {
+	private ButtonInfo findButton(int x, int y) {
 		for (ButtonInfo but : buttonInfoList) {
 			if (isInside(but, x, y)) {
 				return but;
 			}
 		}
 		return null;
-    }
-    
-    private void buttonSelected(ButtonInfo selectedButton) {
-    	Log.i(TAG, "Selected:"+selectedButton.name);
-    	if (onButtonGridActionListener!=null) {
-    		onButtonGridActionListener.buttonPressed(selectedButton);
-    	}
-    	
-    	close();    	
-    }
-	
+	}
+
+	private void buttonSelected(ButtonInfo selectedButton) {
+		Log.i(TAG, "Selected:"+selectedButton.name);
+		if (onButtonGridActionListener!=null) {
+			onButtonGridActionListener.buttonPressed(selectedButton);
+		}
+
+		close();    	
+	}
+
 	private boolean isInside(ButtonInfo but, float x, float y) {
 		return (but.top<y && but.bottom>y &&
-			but.left<x && but.right>x);
+				but.left<x && but.right>x);
 	}
 
 	private void showPreview(ButtonInfo buttonInfo) {
@@ -225,44 +240,44 @@ public class ButtonGrid extends TableLayout {
 			mCurrentPreview = buttonInfo;
 			mPreviewText.setText(buttonInfo.name);
 
-            int popupHeight = mPreviewHeight;
-            mPreviewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-            int popupWidth = Math.max(mPreviewText.getMeasuredWidth(), buttonInfo.button.getWidth() + mPreviewText.getPaddingLeft() + mPreviewText.getPaddingRight());
+			int popupHeight = mPreviewHeight;
+			mPreviewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+			int popupWidth = Math.max(mPreviewText.getMeasuredWidth(), buttonInfo.button.getWidth() + mPreviewText.getPaddingLeft() + mPreviewText.getPaddingRight());
 
-            ViewGroup.LayoutParams lp = mPreviewText.getLayoutParams();
-            if (lp != null) {
-                lp.width = popupWidth;
-                lp.height = popupHeight;
-            }
+			ViewGroup.LayoutParams lp = mPreviewText.getLayoutParams();
+			if (lp != null) {
+				lp.width = popupWidth;
+				lp.height = popupHeight;
+			}
 
-            // where to place the popup
-            int popupPreviewX;
-            int popupPreviewY;
-            if (buttonInfo.rowNo<2) {
-        		int horizontalOffset = (2*buttonInfo.button.getWidth());
-    			// if in top 2 rows then show off to right/left to avoid popup going off the screen
-            	if (buttonInfo.colNo<mRowColLayout.cols/2.0) {
-            		// key is on left so show to right of key
-        			popupPreviewX = buttonInfo.left - mPreviewText.getPaddingLeft() + horizontalOffset;
-            	} else {
-            		// key is on right so show to right of key
-        			popupPreviewX = buttonInfo.left - mPreviewText.getPaddingLeft() - horizontalOffset;
-            	}
-                popupPreviewY = buttonInfo.bottom;
-            } else {
-            	// show above the key above the one currently pressed 
-    			popupPreviewX = buttonInfo.left - mPreviewText.getPaddingLeft();
-                popupPreviewY = buttonInfo.top /*- popupHeight*/+ mPreviewOffset;
-            }
-			
-            if (mPreviewPopup.isShowing()) {
-                mPreviewPopup.update(popupPreviewX, popupPreviewY, popupWidth, popupHeight);
-            } else {
-            	mPreviewPopup.setWidth(popupWidth);
-                mPreviewPopup.setHeight(popupHeight);
-                mPreviewPopup.showAtLocation(this, Gravity.NO_GRAVITY, popupPreviewX, popupPreviewY);
-            }
-            mPreviewText.setVisibility(VISIBLE);
+			// where to place the popup
+			int popupPreviewX;
+			int popupPreviewY;
+			if (buttonInfo.rowNo<2) {
+				int horizontalOffset = (2*buttonInfo.button.getWidth());
+				// if in top 2 rows then show off to right/left to avoid popup going off the screen
+				if (buttonInfo.colNo<mRowColLayout.cols/2.0) {
+					// key is on left so show to right of key
+					popupPreviewX = buttonInfo.left - mPreviewText.getPaddingLeft() + horizontalOffset;
+				} else {
+					// key is on right so show to right of key
+					popupPreviewX = buttonInfo.left - mPreviewText.getPaddingLeft() - horizontalOffset;
+				}
+				popupPreviewY = buttonInfo.bottom;
+			} else {
+				// show above the key above the one currently pressed 
+				popupPreviewX = buttonInfo.left - mPreviewText.getPaddingLeft();
+				popupPreviewY = buttonInfo.top /*- popupHeight*/+ mPreviewOffset;
+			}
+
+			if (mPreviewPopup.isShowing()) {
+				mPreviewPopup.update(popupPreviewX, popupPreviewY, popupWidth, popupHeight);
+			} else {
+				mPreviewPopup.setWidth(popupWidth);
+				mPreviewPopup.setHeight(popupHeight);
+				mPreviewPopup.showAtLocation(this, Gravity.NO_GRAVITY, popupPreviewX, popupPreviewY);
+			}
+			mPreviewText.setVisibility(VISIBLE);
 		} else {
 			// could be returning to this view via Back or Finish and the user represses same button 
 			if (mPreviewText.getVisibility()!=VISIBLE) { 
@@ -270,39 +285,39 @@ public class ButtonGrid extends TableLayout {
 			}
 		}
 	}
-	
-    @Override
+
+	@Override
 	protected void onDetachedFromWindow() {
-    	close();
-    	
+		close();
+
 		super.onDetachedFromWindow();
 	}
-    
-    private void close() {
-    	if (mPreviewPopup.isShowing()) {
-    		mPreviewPopup.dismiss();
-    	}
-    }
-    
+
+	private void close() {
+		if (mPreviewPopup.isShowing()) {
+			mPreviewPopup.dismiss();
+		}
+	}
+
 	/** calculate button position relative to this table because MotionEvents are relative to this table
-     */
-    private void recordButtonPositions() {
+	 */
+	private void recordButtonPositions() {
 		for (ButtonInfo buttonInfo : buttonInfoList) {
-			
+
 			// get position of button within row
 			Button button = buttonInfo.button;
 			TableRow tableRow = (TableRow)button.getParent();
-			
+
 			buttonInfo.left += button.getLeft()+tableRow.getLeft();
 			buttonInfo.top += button.getTop()+tableRow.getTop();
 			buttonInfo.right += button.getRight()+tableRow.getLeft();
 			buttonInfo.bottom += button.getBottom()+tableRow.getTop();
 		}
-		
+
 		// calculate offset of 2 button heights so users can see the buttons surrounding the current button pressed
 		ButtonInfo but1 = buttonInfoList.get(0);
 		mPreviewOffset = but1.top - but1.bottom;
-    }
+	}
 	/**
 	 * @param onButtonGridActionListener the onButtonGridActionListener to set
 	 */
