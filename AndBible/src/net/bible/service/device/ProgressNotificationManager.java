@@ -31,25 +31,25 @@ import android.widget.RemoteViews;
  */
 public class ProgressNotificationManager {
 	private static final String TAG = "ProgressNotificationManager";
-	
+
 	Map<Progress, Notification> progressMap = new HashMap<Progress, Notification>();
-	
+
 	private WorkListener workListener;
 
 	private NotificationManager androidNotificationManager = getNotificationManager();
-	
+
 	private static final ProgressNotificationManager singleton = new ProgressNotificationManager();
-	
+
 	// only one instance initialised at startup to monitor for JSword Progress events and map them to Android Notifications
 	private ProgressNotificationManager() {
 	}
-	
+
 	public static ProgressNotificationManager getInstance() {
 		return singleton;
 	}
-	
-    public void initialise() {
-        Log.i(TAG, "Initializing");
+
+	public void initialise() {
+		Log.i(TAG, "Initializing");
 
 		workListener = new WorkListener() {
 
@@ -65,7 +65,7 @@ public class ProgressNotificationManager {
 					if (!StringUtils.isEmpty(prog.getSectionName()) && !prog.getSectionName().equalsIgnoreCase(prog.getJobName())) {
 						status += prog.getSectionName();
 					}
-	
+
 					// update notification view
 					final Notification notification = findOrCreateNotification(prog);
 					notification.contentView.setProgressBar(R.id.status_progress, 100, done, false);
@@ -74,7 +74,7 @@ public class ProgressNotificationManager {
 					// this next line is REALLY slow and is the reason we only update the notification manager every 5%
 					// inform the progress bar of updates in progress
 					androidNotificationManager.notify(prog.hashCode(), notification);
-	                
+
 					if (prog.isFinished()) {
 						finished(prog);
 					}
@@ -89,29 +89,29 @@ public class ProgressNotificationManager {
 		};
 		JobManager.addWorkListener(workListener);
 
-        Log.d(TAG, "Finished Initializing");
-    }
-    
-    private void finished(Progress prog) {
+		Log.d(TAG, "Finished Initializing");
+	}
+
+	private void finished(Progress prog) {
 		Log.d(TAG, "Finished");
 		androidNotificationManager.cancel(prog.hashCode());
 		progressMap.remove(prog);
-    }
-    
+	}
+
 	public void close() {
 		Log.i(TAG,"Clearing Notifications");
 		try {
 			// clear map and all Notification objects
-		    for (Progress prog : progressMap.keySet()) {
-		    	if (prog.isCancelable()) {
-		    		Log.i(TAG,"Cancelling job");
-		    		prog.cancel();
-		    	}
-		    	finished(prog);
-		    }
-	
-		    // de-register from notifications
-		    JobManager.removeWorkListener(workListener);
+			for (Progress prog : progressMap.keySet()) {
+				if (prog.isCancelable()) {
+					Log.i(TAG,"Cancelling job");
+					prog.cancel();
+				}
+				finished(prog);
+			}
+
+			// de-register from notifications
+			JobManager.removeWorkListener(workListener);
 		} catch (Exception e) {
 			Log.e(TAG, "Error tidying up", e);
 		}
@@ -122,33 +122,32 @@ public class ProgressNotificationManager {
 	 * @param prog
 	 * @return
 	 */
-    private Notification findOrCreateNotification(Progress prog) {
-    	Notification notification = progressMap.get(prog);
-    	if (notification == null) {
+	private Notification findOrCreateNotification(Progress prog) {
+		Notification notification = progressMap.get(prog);
+		if (notification == null) {
 			Log.d(TAG, "Creating Notification for progress Hash:"+prog.hashCode());
-    		// configure the intent
-            Intent intent = new Intent(BibleApplication.getApplication(), ProgressStatus.class);
-            final PendingIntent pendingIntent = PendingIntent.getActivity(BibleApplication.getApplication(), 0, intent, 0);
+			// configure the intent
+			Intent intent = new Intent(BibleApplication.getApplication(), ProgressStatus.class);
+			final PendingIntent pendingIntent = PendingIntent.getActivity(BibleApplication.getApplication(), 0, intent, 0);
 
-        	notification = new Notification(R.drawable.bible, prog.getJobName(), System.currentTimeMillis());
-            notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT | Notification.FLAG_AUTO_CANCEL;
-            notification.contentView = new RemoteViews(SharedConstants.PACKAGE_NAME, R.layout.progress_notification);
-            notification.contentIntent = pendingIntent;
-            notification.contentView.setImageViewResource(R.id.status_icon, R.drawable.bible);
-            notification.contentView.setTextViewText(R.id.status_text, "");
-            notification.contentView.setProgressBar(R.id.status_progress, 100, prog.getWork(), false);
+			notification = new Notification(R.drawable.stat_bible, prog.getJobName(), System.currentTimeMillis());
+			notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT | Notification.FLAG_AUTO_CANCEL;
+			notification.contentView = new RemoteViews(SharedConstants.PACKAGE_NAME, R.layout.progress_notification);
+			notification.contentIntent = pendingIntent;
+			notification.contentView.setImageViewResource(R.id.status_icon, R.drawable.stat_bible);
+			notification.contentView.setTextViewText(R.id.status_text, "");
+			notification.contentView.setProgressBar(R.id.status_progress, 100, prog.getWork(), false);
 
-    		progressMap.put(prog, notification);
-    		
-            androidNotificationManager.notify(prog.hashCode(), notification);    	
-    	}
-    	
-    	return notification;
-    }
+			progressMap.put(prog, notification);
 
-    private NotificationManager getNotificationManager() {
+			androidNotificationManager.notify(prog.hashCode(), notification);    	
+		}
+
+		return notification;
+	}
+
+	private NotificationManager getNotificationManager() {
 		// add it to the NotificationManager
 		return  (NotificationManager) BibleApplication.getApplication().getSystemService(Application.NOTIFICATION_SERVICE);
-
-    }
+	}
 }
