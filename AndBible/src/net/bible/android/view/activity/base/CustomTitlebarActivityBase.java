@@ -48,6 +48,10 @@ public abstract class CustomTitlebarActivityBase extends ActivityBase {
         
         // force the toolbar buttons to be shown correctly
         getToolbar().updateButtons();
+        
+        if (isFullScreen()) {
+        	mTitleBar.setVisibility(View.GONE);
+        }
     }
     
     public void toggleFullScreen() {
