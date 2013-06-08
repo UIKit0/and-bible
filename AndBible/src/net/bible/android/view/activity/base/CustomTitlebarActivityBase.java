@@ -7,6 +7,9 @@ import net.bible.android.view.activity.base.toolbar.Toolbar;
 import android.content.res.Configuration;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 
 public abstract class CustomTitlebarActivityBase extends ActivityBase {
@@ -48,16 +51,27 @@ public abstract class CustomTitlebarActivityBase extends ActivityBase {
     }
     
     public void toggleFullScreen() {
-    	super.toggleFullScreen();
-    	
-    	if (!isFullScreen()) {
+    	if (isFullScreen()) {
     		Log.d(TAG, "Showing title bar");
+    		mTitleBar.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom));
     		mTitleBar.setVisibility(View.VISIBLE);
+    		super.toggleFullScreen();
     	} else {
     		Log.d(TAG, "Hiding title bar");
+    		Animation animOut = AnimationUtils.loadAnimation(this, R.anim.slide_out_bottom);
+    		animOut.setAnimationListener(new AnimationListener() {
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					CustomTitlebarActivityBase.super.toggleFullScreen();
+				}
+				@Override
+				public void onAnimationRepeat(Animation animation) {}
+				@Override
+				public void onAnimationStart(Animation animation) {}
+    		});
+    		mTitleBar.startAnimation(animOut);
     		mTitleBar.setVisibility(View.GONE);
     	}
-
     	mContentView.requestLayout();
     }
 
