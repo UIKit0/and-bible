@@ -316,6 +316,15 @@ public class MainBibleActivity extends CustomTitlebarActivityBase {
 			public void run() {
 		    	setProgressBar(false);
 		    	updateToolbarButtonText();
+
+				// actionbar buttons refresh
+				passage = ControlFactory.getInstance().getPageControl()
+						.getCurrentPageTitle();
+				if (mMenuItemChoosePassage != null) {
+					mMenuItemChoosePassage.setTitle(passage);
+					supportInvalidateOptionsMenu();
+				}
+
 		    	// don't sense taps at bottom of screen if Strongs numbers link might be there or Map zoom control might be there
 				gestureListener.setSensePageDownTap(!isStrongsShown() && !CurrentPageManager.getInstance().isMapShown());
 			}
