@@ -27,6 +27,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -38,13 +39,13 @@ public class CommonUtils {
 
 	private static final String TAG = "CommonUtils"; 
 	static private boolean isAndroid = false;
-	
+
 	//todo have to finish implementing switchable logging here
 	static {
 		try {
-	        if (android.os.Build.ID != null) {
-	            isAndroid = true;
-	        }
+			if (android.os.Build.ID != null) {
+				isAndroid = true;
+			}
 		} catch (Exception cnfe) {
 			isAndroid = false;
 		}
@@ -58,34 +59,34 @@ public class CommonUtils {
 	public static String getApplicationVersionName() {
 		String versionName = null;
 		try
-        {
-            PackageManager manager = BibleApplication.getApplication().getPackageManager();
-            PackageInfo info = manager.getPackageInfo(BibleApplication.getApplication().getPackageName(), 0);
-            versionName = info.versionName;
-        }
-        catch ( final NameNotFoundException e )
-        {
-            Log.e(TAG, "Error getting package name.", e);
-            versionName = "Error";
-        }
-        return versionName;
+		{
+			PackageManager manager = BibleApplication.getApplication().getPackageManager();
+			PackageInfo info = manager.getPackageInfo(BibleApplication.getApplication().getPackageName(), 0);
+			versionName = info.versionName;
+		}
+		catch ( final NameNotFoundException e )
+		{
+			Log.e(TAG, "Error getting package name.", e);
+			versionName = "Error";
+		}
+		return versionName;
 	}
 	public static int getApplicationVersionNumber() {
 		int versionNumber;
 		try
-        {
-            PackageManager manager = BibleApplication.getApplication().getPackageManager();
-            PackageInfo info = manager.getPackageInfo(BibleApplication.getApplication().getPackageName(), 0);
-            versionNumber = info.versionCode;
-        }
-        catch ( final NameNotFoundException e )
-        {
-            Log.e(TAG, "Error getting package name.", e);
-            versionNumber = -1;
-        }
-        return versionNumber;
+		{
+			PackageManager manager = BibleApplication.getApplication().getPackageManager();
+			PackageInfo info = manager.getPackageInfo(BibleApplication.getApplication().getPackageName(), 0);
+			versionNumber = info.versionCode;
+		}
+		catch ( final NameNotFoundException e )
+		{
+			Log.e(TAG, "Error getting package name.", e);
+			versionNumber = -1;
+		}
+		return versionNumber;
 	}
-	
+
 	public static boolean isFroyoPlus() {
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
 	}
@@ -128,7 +129,7 @@ public class CommonUtils {
 		Log.d(TAG, "Free space :"+bytesAvailable);
 		return bytesAvailable;
 	}
-	
+
 	/** shorten text for display in lists etc.
 	 * 
 	 * @param text
@@ -143,12 +144,12 @@ public class CommonUtils {
 	public static String limitTextLength(String text, int maxLength, boolean singleLine) {
 		if (text!=null) {
 			int origLength = text.length();
-			
+
 			if (singleLine) {
 				// get first line but limit length in case there are no line breaks
 				text = StringUtils.substringBefore(text,"\n");
 			}
-			
+
 			if (text.length()>maxLength) {
 				// break on a space rather than mid-word
 				int cutPoint = text.indexOf(" ", maxLength);
@@ -156,42 +157,51 @@ public class CommonUtils {
 					text = text.substring(0, cutPoint+1);
 				}
 			}
-			
+
 			if (text.length() != origLength) {
 				text += ELLIPSIS;
 			}
 		}
 		return text;
 	}
-	
-    public static boolean isInternetAvailable() {
-    	String testUrl = "http://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/";
-    	return CommonUtils.isHttpUrlAvailable(testUrl);
-    }
 
-    public static boolean isHttpUrlAvailable(String urlString) {
- 	    HttpURLConnection connection = null;
-    	try {
-    		// might as well test for the url we need to access
-	 	    URL url = new URL(urlString);
-	 	         
-	 	    Log.d(TAG, "Opening test connection");
-	 	    connection = (HttpURLConnection)url.openConnection();
-	 	    connection.setConnectTimeout(3000);
-	 	    Log.d(TAG, "Connecting to test internet connection");
-	 	    connection.connect();
-	 	    boolean success = (connection.getResponseCode() == HttpURLConnection.HTTP_OK);
-	 	    Log.d(TAG, "Url test result for:"+urlString+" is "+success);
-	 	    return success;
-    	} catch (IOException e) {
-    		Log.i(TAG, "No internet connection");
-    		return false;
-    	} finally {
-    		if (connection!=null) {
-    			connection.disconnect();
-    		}
-    	}
-    }
+	public static boolean isInternetAvailable() {
+		String testUrl = "http://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/";
+		return CommonUtils.isHttpUrlAvailable(testUrl);
+	}
+
+	public static boolean isHttpUrlAvailable(String urlString) {
+
+		// FIXME: ugly workaround for android.os.NetworkOnMainThreadException on API10+, 
+		// but we have a timeout of 3 seconds anyway, which is before 5 seconds for ANR
+		if (android.os.Build.VERSION.SDK_INT > 9) {
+			StrictMode.ThreadPolicy policy = 
+					new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
+			StrictMode.setThreadPolicy(policy);
+		}
+
+		HttpURLConnection connection = null;
+		try {
+			// might as well test for the url we need to access
+			URL url = new URL(urlString);
+
+			Log.d(TAG, "Opening test connection");
+			connection = (HttpURLConnection)url.openConnection();
+			connection.setConnectTimeout(3000);
+			Log.d(TAG, "Connecting to test internet connection");
+			connection.connect();
+			boolean success = (connection.getResponseCode() == HttpURLConnection.HTTP_OK);
+			Log.d(TAG, "Url test result for:"+urlString+" is "+success);
+			return success;
+		} catch (IOException e) {
+			Log.i(TAG, "No internet connection");
+			return false;
+		} finally {
+			if (connection!=null) {
+				connection.disconnect();
+			}
+		}
+	}
 
 	public static void ensureDirExists(File dir) {
 		if (!dir.exists() || !dir.isDirectory()) {
@@ -227,33 +237,33 @@ public class CommonUtils {
 		if (propertiesFile.exists()) {
 			FileInputStream in = null;
 			try {
-            	in = new FileInputStream(propertiesFile);
-            	properties.load(in);
+				in = new FileInputStream(propertiesFile);
+				properties.load(in);
 			} catch (Exception e) {
 				Log.e(TAG, "Error loading properties", e);
 			} finally {
-            	IOUtil.close(in);
+				IOUtil.close(in);
 			}
 		}
 		return properties;
 	}
-	
-    public static void pause(int seconds) {
-    	try {
-    		Thread.sleep(seconds*1000);
-    	} catch (Exception e) {
-    		Log.e(TAG, "error sleeping", e);
-    	}
-    }
-    
-    public static boolean isPortrait() {
-    	return BibleApplication.getApplication().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-    }
 
-    public static String getLocalePref() {
-    	return getSharedPreferences().getString("locale_pref", "");
-    }
-    
+	public static void pause(int seconds) {
+		try {
+			Thread.sleep(seconds*1000);
+		} catch (Exception e) {
+			Log.e(TAG, "error sleeping", e);
+		}
+	}
+
+	public static boolean isPortrait() {
+		return BibleApplication.getApplication().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+	}
+
+	public static String getLocalePref() {
+		return getSharedPreferences().getString("locale_pref", "");
+	}
+
 	/** get preferences used by User Prefs screen
 	 * 
 	 * @return
@@ -261,7 +271,7 @@ public class CommonUtils {
 	public static SharedPreferences getSharedPreferences() {
 		return PreferenceManager.getDefaultSharedPreferences(BibleApplication.getApplication().getApplicationContext());
 	}
-	
+
 	public static String getResourceString(int resourceId, Object... formatArgs) {
 		return BibleApplication.getApplication().getResources().getString(resourceId, formatArgs);
 	}
@@ -269,7 +279,7 @@ public class CommonUtils {
 	public static int getResourceInteger(int resourceId) {
 		return BibleApplication.getApplication().getResources().getInteger(resourceId);
 	}
-	
+
 	/**
 	 * convert dip measurements to pixels
 	 */
@@ -278,7 +288,7 @@ public class CommonUtils {
 		float scale = BibleApplication.getApplication().getResources().getDisplayMetrics().density;
 		return (int) ( dips * scale + 0.5f );
 	}
-	
+
 	/**
 	 * convert dip measurements to pixels
 	 */
@@ -322,11 +332,11 @@ public class CommonUtils {
 		}
 		return r.toString();
 	}
-	
+
 	public static Date getTruncatedDate() {
 		return DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
 	}
-	
+
 	/** format seconds duration as h:m:s
 	 * 
 	 * @param milliSecs duration
@@ -336,7 +346,7 @@ public class CommonUtils {
 		int h = (int) (secs / 3600);
 		int m = (int) ((secs / 60) % 60);
 		int s = (int) (secs % 60);
-		
+
 		StringBuilder hms = new StringBuilder();
 		if (h>0) {
 			hms.append(h).append(COLON);
@@ -347,7 +357,7 @@ public class CommonUtils {
 			hms.append(0);
 		}
 		hms.append(m).append(COLON);
-		
+
 		// add padding for 1 digit secs
 		if (s<10) {
 			hms.append(0);
@@ -355,11 +365,11 @@ public class CommonUtils {
 		hms.append(s);
 		return hms.toString();
 	}
-	
+
 	public static Screen getActiveSplitScreen() {
 		return ControlFactory.getInstance().getSplitScreenControl().getCurrentActiveScreen();
 	}
-	
+
 	public static String getVerseDescription(Key key) {
 		String name;
 		try {

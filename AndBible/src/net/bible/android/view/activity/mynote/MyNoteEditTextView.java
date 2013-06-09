@@ -32,7 +32,12 @@ public class MyNoteEditTextView extends EditText implements DocumentView {
 	public MyNoteEditTextView(Context context) {
 		super(context);
 		setSingleLine(false);
-		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+		LinearLayout.LayoutParams layoutParams;
+		if (CommonUtils.isFroyoPlus()) {
+			layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+		} else {
+			layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
+		}
 		setLayoutParams(layoutParams);
 		setGravity(Gravity.TOP);
 		
