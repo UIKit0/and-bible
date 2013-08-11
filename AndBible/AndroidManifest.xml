@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.bible.android.activity"
     android:installLocation="auto"
-    android:versionCode="104"
-    android:versionName="20130604" >
+    android:versionCode="105"
+    android:versionName="20130607" >
 
     <uses-sdk
         android:minSdkVersion="7"
